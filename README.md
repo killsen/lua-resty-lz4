@@ -1,8 +1,6 @@
-# ljlz4
+# LUA-RESTY-LZ4
 
-[![ci-dev](https://github.com/CheyiLin/ljlz4/actions/workflows/ci-dev.yml/badge.svg)](https://github.com/CheyiLin/ljlz4/actions/workflows/ci-dev.yml)
-
-LZ4 library for LuaJIT (FFI Binding)
+[LZ4](https://github.com/lz4/lz4) library for LuaJIT (FFI Binding)
 
 ## Compatibility
 
@@ -18,24 +16,38 @@ LZ4 library for LuaJIT (FFI Binding)
 ### Overview
 
 ```lua
-local lz4 = require("lz4")
-local data = "hello lz4"
-local errmsg, compressed_data, decompressed_data
-compressed_data, errmsg = lz4.compress(data)
-decompressed_data, errmsg = lz4.decompress(compressed_data)
-assert(decompressed_data == data)
+local lz4 = require "resty.lz4"
+
+local data = string.rep("hello lz4", 100)
+ngx.say("#data : ", #data)
+
+local compressed_data, err = lz4.compress(data)
+local decompressed_data, err = lz4.decompress(compressed_data, #data)
+
+ngx.say("#compressed_data : ", #compressed_data)
+ngx.say("#decompressed_data : ", #decompressed_data)
+ngx.say("decompressed_data == data : ", decompressed_data == data)
+
+local compressed_data_hdr, err = lz4.compress_hdr(data)
+local decompressed_data_hdr, err = lz4.decompress_hdr(compressed_data_hdr)
+
+ngx.say("#compressed_data_hdr : ", #compressed_data_hdr)
+ngx.say("#decompressed_data_hdr : ", #decompressed_data_hdr)
+ngx.say("decompressed_data_hdr == data: ", decompressed_data_hdr == data)
 ```
 
 ### Compression
 
 ```lua
-local compressed_data, errmsg = lz4.compress(data, compression_level)
+local compressed_data, err = lz4.compress(data)
+local compressed_data_hdr, err = lz4.compress_hdr(data, compression_level)
 ```
 
 ### Decompression
 
 ```lua
-local decompressed_data, errmsg = lz4.decompress(compressed_data)
+local decompressed_data, err = lz4.decompress(compressed_data)
+local decompressed_data_hdr, err = lz4.decompress_hdr(compressed_data_hdr)
 ```
 
 ## License
